@@ -16,5 +16,9 @@ type Server struct {
 }
 
 type Database struct {
-	DSN string
+	UserName string
+	Password string
+	Host     string
+	Port     string
+	DBName   string
 }

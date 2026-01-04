@@ -1,6 +1,7 @@
 package bootstrap
 
 import (
+	"github.com/realwebdev/blog/internal/database"
 	"github.com/realwebdev/blog/pkg/config"
 	"github.com/realwebdev/blog/pkg/html"
 	"github.com/realwebdev/blog/pkg/routing"
@@ -9,6 +10,8 @@ import (
 
 func Serve() {
 	config.Set()
+
+	database.Connect()
 
 	routing.Init()
 

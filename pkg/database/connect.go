@@ -2,30 +2,32 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
-	"os"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/realwebdev/blog/pkg/config"
 )
 
-var DB *sql.DB
-
 func Connect() {
-	var err error
-	dsn := os.Getenv("DB_DSN")
 
-	if dsn == "" {
-		dsn = "postgres://postgres:postgres@localhost:5432/blog_db?sslmode=disable"
-	}
+	configs := config.Get()
 
-	DB, err = sql.Open("pgx", dsn)
+	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
+		configs.Database.UserName, configs.Database.Password, configs.Database.Host, configs.Database.Port, config.Database.DBName)
+
+	db, err := sql.Open("pgx", dsn)
 	if err != nil {
 		log.Fatalf("Error opening database: %v", err)
 	}
+
+	db.SetMaxOpenConns(25)
+	db.SetMaxIdleConns(25)
 
 	if err = DB.Ping(); err != nil {
 		log.Fatalf("Error connecting to database: %v", err)
 	}
 
 	log.Println("Database connected successfully")
+	DB = db
 }

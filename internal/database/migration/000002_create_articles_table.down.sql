@@ -8,5 +8,3 @@ CREATE TABLE articles (
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
--- +goose Down
-DROP TABLE IF EXISTS articles;

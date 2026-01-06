@@ -2,8 +2,9 @@ package seeder
 
 import (
 	"log"
+	"os"
 
-	"github.com/realwebdev/blog/internal/modules/home/user"
+	"github.com/realwebdev/blog/internal/modules/user"
 	"github.com/realwebdev/blog/pkg/database"
 )
 
@@ -16,7 +17,13 @@ func Seed() {
 	service := user.NewService(repo)
 
 	// Create Admin User
-	err := service.RegisterUser("Admin User", "admin@example.com", "password123")
+	password := os.Getenv("ADMIN_PASSWORD")
+	if password == "" {
+		password = "password123"
+		log.Println("WARNING: Using default insecure password 'password123' for admin. Set ADMIN_PASSWORD env var to override.")
+	}
+
+	err := service.RegisterUser("Admin User", "admin@example.com", password)
 	if err != nil {
 		log.Printf("Error seeding user (might already exist): %v", err)
 	} else {

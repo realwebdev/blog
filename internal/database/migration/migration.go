@@ -21,7 +21,7 @@ func Migrate(args []string) {
 		log.Fatal(err)
 	}
 
-	migrationDir := "pkg/database"
+	migrationDir := "internal/database/migration"
 
 	if command == "create" {
 		if len(args) < 2 {
@@ -44,3 +44,39 @@ func Migrate(args []string) {
 	}
 
 }
+
+/*
+
+-- +goose Up
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+-- +goose Down
+DROP TABLE IF EXISTS users;
+
+
+--------------------------------------------articles---------------------
+
+
+-- +goose Up
+CREATE TABLE articles (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+-- +goose Down
+DROP TABLE IF EXISTS users;
+
+
+
+
+*/

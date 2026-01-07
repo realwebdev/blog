@@ -1,4 +1,4 @@
-package repositories
+package services
 
 import (
 	"database/sql"
@@ -6,17 +6,10 @@ import (
 
 	"github.com/realwebdev/blog/internal/modules/article/models"
 	userModels "github.com/realwebdev/blog/internal/modules/user/models"
-	"github.com/realwebdev/blog/pkg/database"
 )
 
 type ArticleRepository struct {
 	DB *sql.DB
-}
-
-func New() *ArticleRepository {
-	return &ArticleRepository{
-		DB: database.Connection(),
-	}
 }
 
 func (r *ArticleRepository) List(limit int) []models.Article {

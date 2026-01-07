@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/realwebdev/blog/internal/modules/home/user/models"
+	"github.com/realwebdev/blog/internal/modules/user/models"
 )
 
 type UserRepository interface {
@@ -20,3 +20,4 @@ func (r *PostgresUserRepository) Create(u *models.User) error {
 	_, err := r.DB.Exec(query, u.Name, u.Email, u.Password, time.Now(), time.Now())
 	return err
 }
+

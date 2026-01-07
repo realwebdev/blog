@@ -1,10 +1,10 @@
-package repositories
+package services
 
 import (
 	"github.com/realwebdev/blog/internal/modules/article/models"
 )
 
-type ArticleRepositoryInterface interface {
+type ArticleRepostioryInterface interface {
 	List(limit int) []models.Article
 	Find(id int) models.Article
 	Create(article models.Article) models.Article

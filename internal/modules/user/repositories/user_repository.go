@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/mail"
 
-	"github.com/realwebdev/blog/internal/modules/home/user/models"
+	"github.com/realwebdev/blog/internal/modules/user/models"
 	"golang.org/x/crypto/bcrypt"
 )
 

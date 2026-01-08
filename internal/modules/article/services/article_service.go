@@ -1,71 +1,28 @@
 package services
 
 import (
-	"database/sql"
-	"log"
-
 	"github.com/realwebdev/blog/internal/modules/article/models"
-	userModels "github.com/realwebdev/blog/internal/modules/user/models"
+	"github.com/realwebdev/blog/internal/modules/article/repositories"
 )
 
-type ArticleRepository struct {
-	DB *sql.DB
+// This service is a middle between controller and the repository. It will call function from repository
+// file.
+type ArticleService struct { //
+	articleRepository repositories.ArticleRepositoryInterface
 }
 
-func (r *ArticleRepository) List(limit int) []models.Article {
-	var articles []models.Article
-	query := `
-		SELECT a.id, a.title, a.content, a.user_id, u.id, u.name, u.email
-		FROM articles a
-		LEFT JOIN users u ON a.user_id = u.id
-		LIMIT $1
-	`
-	rows, err := r.DB.Query(query, limit)
-	if err != nil {
-		log.Println("Error fetching articles:", err)
-		return articles
+func New(repo repositories.ArticleRepositoryInterface) *ArticleService {
+	return &ArticleService{
+		articleRepository: repo,
 	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var article models.Article
-		var user userModels.User
-		if err := rows.Scan(&article.ID, &article.Title, &article.Content, &article.UserID, &user.ID, &user.Name, &user.Email); err != nil {
-			log.Println("Error scanning article:", err)
-			continue
-		}
-		article.User = user
-		articles = append(articles, article)
-	}
-
-	return articles
 }
 
-func (r *ArticleRepository) Find(id int) models.Article {
-	var article models.Article
-	var user userModels.User
+func (as *ArticleService) GetFeaturedArticles() []models.Article {
 
-	query := `
-		SELECT a.id, a.title, a.content, a.user_id, u.id, u.name, u.email
-		FROM articles a
-		LEFT JOIN users u ON a.user_id = u.id
-		WHERE a.id = $1
-	`
-	err := r.DB.QueryRow(query, id).Scan(&article.ID, &article.Title, &article.Content, &article.UserID, &user.ID, &user.Name, &user.Email)
-	if err != nil {
-		log.Println("Error finding article:", err)
-		return models.Article{}
-	}
-
-	article.User = user
-	return article
+	return as.articleRepository.List(4)
 }
 
-func (r *ArticleRepository) Create(article *models.Article) error {
-	query := `
-		INSERT INTO articles (title, content, user_id, created_at, updated_at)
-		VALUES ($1, $2, $3, NOW(), NOW())
-		RETURNING id
-	`
-	return r.DB.QueryRow(query, article.Title, article.Content, article.UserID).Scan(&article.ID)
+func (as *ArticleService) GetStoriesArticles() []models.Article {
+
+	return as.articleRepository.List(4)
 }

@@ -4,21 +4,28 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/realwebdev/blog/internal/modules/article/repositories"
+	"github.com/realwebdev/blog/internal/modules/article/services"
 )
 
 type Controller struct {
-	articleRepository *repositories.ArticleRepository
+	articleService services.ArticleServiceInterface
 }
 
-func New() *Controller {
+func New(aSI services.ArticleServiceInterface) *Controller {
 	return &Controller{
-		articleRepository: repositories.New(),
+		articleService: aSI,
 	}
 }
 
 func (controller *Controller) Index(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
-		"articles": controller.articleRepository.List(3),
+		"articles": controller.articleService.GetFeaturedArticles(),
+		"stories":  controller.articleService.GetStoriesArticles(),
 	})
 }
+
+// func New(repo repositories.ArticleRepositoryInterface) *ArticleService {
+// 	return &ArticleService{
+// 		articleRepository: repo,
+// 	}
+// }

@@ -6,6 +6,6 @@ import (
 
 type ArticleRepositoryInterface interface {
 	List(limit int) []models.Article
-	Find(id int) models.Article
-	Create(article models.Article) models.Article
+	Find(id int) []models.Article
+	Create(article *models.Article) error
 }

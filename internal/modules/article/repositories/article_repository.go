@@ -9,6 +9,9 @@ import (
 	"github.com/realwebdev/blog/pkg/database"
 )
 
+// This line forces the compiler to check if ArticleRepository implements ArticleRepositoryInterface
+var _ ArticleRepositoryInterface = (*ArticleRepository)(nil)
+
 type ArticleRepository struct {
 	DB *sql.DB
 }
@@ -19,6 +22,7 @@ func New() *ArticleRepository {
 	}
 }
 
+// TODO: return errors.
 func (r *ArticleRepository) List(limit int) []models.Article {
 	var articles []models.Article
 	query := `
@@ -48,7 +52,7 @@ func (r *ArticleRepository) List(limit int) []models.Article {
 	return articles
 }
 
-func (r *ArticleRepository) Find(id int) models.Article {
+func (r *ArticleRepository) Find(id int) []models.Article {
 	var article models.Article
 	var user userModels.User
 
@@ -61,11 +65,11 @@ func (r *ArticleRepository) Find(id int) models.Article {
 	err := r.DB.QueryRow(query, id).Scan(&article.ID, &article.Title, &article.Content, &article.UserID, &user.ID, &user.Name, &user.Email)
 	if err != nil {
 		log.Println("Error finding article:", err)
-		return models.Article{}
+		return []models.Article{}
 	}
 
 	article.User = user
-	return article
+	return []models.Article{article}
 }
 
 func (r *ArticleRepository) Create(article *models.Article) error {

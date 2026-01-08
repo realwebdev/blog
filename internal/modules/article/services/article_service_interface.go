@@ -1,10 +1,8 @@
 package services
 
-import (
-	"github.com/realwebdev/blog/internal/modules/article/models"
-)
+import "github.com/realwebdev/blog/internal/modules/article/responses"
 
 type ArticleServiceInterface interface {
-	GetFeaturedArticles() []models.Article
-	GetStoriesArticles() []models.Article
+	GetFeaturedArticles() responses.Articles
+	GetStoriesArticles() responses.Articles
 }

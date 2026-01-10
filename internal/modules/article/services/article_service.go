@@ -1,6 +1,8 @@
 package services
 
 import (
+	"errors"
+
 	"github.com/realwebdev/blog/internal/modules/article/repositories"
 	"github.com/realwebdev/blog/internal/modules/article/responses"
 )
@@ -24,4 +26,16 @@ func (as *ArticleService) GetFeaturedArticles() responses.Articles {
 func (as *ArticleService) GetStoriesArticles() responses.Articles {
 	articles := as.articleRepository.List(4)
 	return responses.ToArticles(articles)
+}
+
+func (as *ArticleService) Find(id int64) (responses.Article, error) {
+	var response responses.Article
+
+	article := as.articleRepository.Find(id)
+
+	if article.ID == 0 {
+		return response, errors.New("article not found")
+	}
+
+	return responses.ToArticle(article), nil
 }

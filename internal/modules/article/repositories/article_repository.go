@@ -23,7 +23,7 @@ func New() *ArticleRepository {
 }
 
 // TODO: return errors.
-func (r *ArticleRepository) List(limit int) []models.Article {
+func (r *ArticleRepository) List(limit int64) []models.Article {
 	var articles []models.Article
 	query := `
 		SELECT a.id, a.title, a.content, a.user_id, u.id, u.name, u.email
@@ -52,7 +52,7 @@ func (r *ArticleRepository) List(limit int) []models.Article {
 	return articles
 }
 
-func (r *ArticleRepository) Find(id int) []models.Article {
+func (r *ArticleRepository) Find(id int64) models.Article {
 	var article models.Article
 	var user userModels.User
 
@@ -65,11 +65,11 @@ func (r *ArticleRepository) Find(id int) []models.Article {
 	err := r.DB.QueryRow(query, id).Scan(&article.ID, &article.Title, &article.Content, &article.UserID, &user.ID, &user.Name, &user.Email)
 	if err != nil {
 		log.Println("Error finding article:", err)
-		return []models.Article{}
+		return models.Article{}
 	}
 
 	article.User = user
-	return []models.Article{article}
+	return article
 }
 
 func (r *ArticleRepository) Create(article *models.Article) error {

@@ -5,7 +5,7 @@ import (
 )
 
 type ArticleRepositoryInterface interface {
-	List(limit int) []models.Article
-	Find(id int) []models.Article
+	List(limit int64) []models.Article
+	Find(id int64) models.Article // single article return
 	Create(article *models.Article) error
 }

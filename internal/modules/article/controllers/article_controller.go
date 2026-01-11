@@ -23,7 +23,7 @@ func (controller *Controller) Show(c *gin.Context) {
 	// 1. Get the article
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusUnprocessableEntity, gin.H{"message": "error converting the id"})
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "error converting the id"})
 		return
 	}
 
@@ -33,7 +33,7 @@ func (controller *Controller) Show(c *gin.Context) {
 	// 3. If the article not found, show error page
 
 	if err != nil {
-		c.JSON(http.StatusUnprocessableEntity, gin.H{"message": "error converting the id"})
+		c.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
 		return
 	}
 	// 4. If article found, render the article page
@@ -44,5 +44,5 @@ func (controller *Controller) Show(c *gin.Context) {
 	// 	"stories":  controller.articleService.GetStoriesArticles(),
 	// })
 
-	c.JSON(http.StatusOK, gin.H{"ID": id})
+	c.JSON(http.StatusOK, gin.H{"ID": article})
 }

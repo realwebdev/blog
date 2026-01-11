@@ -24,14 +24,6 @@ func (controller *Controller) Index(c *gin.Context) {
 		"featured": controller.articleService.GetFeaturedArticles(), // TODO: feature keyword is not showing JSON object
 		"stories":  controller.articleService.GetStoriesArticles(),
 	})
-	// c.JSON(http.StatusOK, gin.H{
-	// 	"articles": controller.articleService.GetFeaturedArticles(),
-	// 	"stories":  controller.articleService.GetStoriesArticles(),
-	// })
+
 }
 
-// func New(repo repositories.ArticleRepositoryInterface) *ArticleService {
-// 	return &ArticleService{
-// 		articleRepository: repo,
-// 	}
-// }

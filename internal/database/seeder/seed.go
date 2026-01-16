@@ -7,7 +7,9 @@ import (
 
 	articleModels "github.com/realwebdev/blog/internal/modules/article/models"
 	articleRepo "github.com/realwebdev/blog/internal/modules/article/repositories"
+	userModels "github.com/realwebdev/blog/internal/modules/user/models"
 	user "github.com/realwebdev/blog/internal/modules/user/repositories"
+	"golang.org/x/crypto/bcrypt"
 
 	"github.com/realwebdev/blog/pkg/database"
 )
@@ -16,7 +18,7 @@ func Seed() {
 	log.Println("Seeding database...")
 
 	db := database.Connection()
-	repo := &user.PostgresUserRepository{
+	repo := user.UserRepository{
 		DB: db,
 	}
 	service := user.NewService(repo)
@@ -44,7 +46,13 @@ func Seed() {
 
 	for _, u := range usersToSeed {
 		// Register User
-		if err := service.RegisterUser(u.Name, u.Email, u.Password); err != nil {
+		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
+		newUser := &userModels.User{
+			Name:     u.Name,
+			Email:    u.Email,
+			Password: string(hashedPassword),
+		}
+		if _, err := service.RegisterUser(newUser); err != nil {
 			log.Printf("Error seeding user %s (might already exist): %v", u.Name, err)
 		} else {
 			log.Printf("User %s created successfully", u.Name)

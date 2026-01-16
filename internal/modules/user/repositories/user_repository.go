@@ -1,37 +1,29 @@
 package user
 
 import (
-	"errors"
-	"net/mail"
+	"database/sql"
+	"time"
 
 	"github.com/realwebdev/blog/internal/modules/user/models"
-	"golang.org/x/crypto/bcrypt"
 )
 
-type Service struct {
-	repo UserRepository
+var _ UserRepositoryInterface = (*UserRepository)(nil)
+
+type UserRepository struct {
+	DB *sql.DB
 }
 
-func NewService(repo UserRepository) *Service {
-	return &Service{
-		repo: repo,
+func NewService(repo UserRepository) *UserRepository {
+	return &UserRepository{
+		DB: repo.DB,
 	}
 }
 
-func (s *Service) RegisterUser(name, email, password string) error {
-	if _, err := mail.ParseAddress(email); err != nil {
-		return errors.New("invalid email format")
-	}
-
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+func (r *UserRepository) RegisterUser(u *models.User) (models.User, error) {
+	query := `INSERT INTO users (name, email, password, created_at, updated_at) VALUES ($1, $2, $3, $4, $5)`
+	_, err := r.DB.Exec(query, u.Name, u.Email, u.Password, time.Now(), time.Now())
 	if err != nil {
-		return err
+		return models.User{}, err
 	}
-
-	user := &models.User{
-		Name:     name,
-		Email:    email,
-		Password: string(hashedPassword),
-	}
-	return s.repo.Create(user)
+	return *u, nil
 }

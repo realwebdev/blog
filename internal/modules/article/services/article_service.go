@@ -7,6 +7,8 @@ import (
 	"github.com/realwebdev/blog/internal/modules/article/responses"
 )
 
+var _ ArticleServiceInterface = (*ArticleService)(nil)
+
 // This service is a middle between controller and the repository. It will call function from repository
 // file.
 type ArticleService struct { //

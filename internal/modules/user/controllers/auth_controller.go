@@ -7,16 +7,19 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/realwebdev/blog/internal/modules/user/requests/auth"
 	userService "github.com/realwebdev/blog/internal/modules/user/services"
+	"github.com/realwebdev/blog/pkg/converters"
+	"github.com/realwebdev/blog/pkg/errors"
 	"github.com/realwebdev/blog/pkg/html"
+	"github.com/realwebdev/blog/pkg/sessions"
 )
 
 type Controller struct {
 	userServiceInterface userService.UserServiceInterface
 }
 
-func New(ctrl Controller) *Controller {
+func New(uSI userService.UserServiceInterface) *Controller {
 	return &Controller{
-		userServiceInterface: ctrl.userServiceInterface,
+		userServiceInterface: uSI,
 	}
 }
 
@@ -31,6 +34,9 @@ func (controller *Controller) HandleRegister(c *gin.Context) {
 	var request auth.RegisterRequest
 
 	if err := c.ShouldBind(&request); err != nil {
+		validationErrors := errors.FromValidation(err)
+
+		sessions.Set(c, "errors", converters.MapToString(validationErrors))
 		c.Redirect(http.StatusFound, "/register")
 		return
 	}
@@ -42,14 +48,11 @@ func (controller *Controller) HandleRegister(c *gin.Context) {
 	}
 
 	log.Printf("The user created successfully with a name %s \n", user.Name)
+	c.Redirect(http.StatusFound, "/")
 
 	// (service layer to create the user inside the database)
 
 	// Check if the there is any error on the user creation
 
 	// after creating the user redirect to the homepage
-
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Register done",
-	})
 }

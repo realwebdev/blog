@@ -5,6 +5,7 @@ import (
 	"github.com/realwebdev/blog/pkg/database"
 	"github.com/realwebdev/blog/pkg/html"
 	"github.com/realwebdev/blog/pkg/routing"
+	"github.com/realwebdev/blog/pkg/sessions"
 	"github.com/realwebdev/blog/pkg/static"
 )
 
@@ -14,6 +15,8 @@ func Serve() {
 	database.Connect()
 
 	routing.Init()
+
+	sessions.Start(routing.GetRouter())
 
 	static.LoadStatic(routing.GetRouter())
 

@@ -6,7 +6,7 @@ import (
 	"os"
 
 	articleModels "github.com/realwebdev/blog/internal/modules/article/models"
-	articleRepo "github.com/realwebdev/blog/internal/modules/article/repositories"
+	"github.com/realwebdev/blog/internal/modules/article/repositories"
 	userModels "github.com/realwebdev/blog/internal/modules/user/models"
 	user "github.com/realwebdev/blog/internal/modules/user/repositories"
 	"golang.org/x/crypto/bcrypt"
@@ -18,10 +18,8 @@ func Seed() {
 	log.Println("Seeding database...")
 
 	db := database.Connection()
-	repo := user.UserRepository{
-		DB: db,
-	}
-	service := user.NewService(repo)
+	userRepo := user.New(db)
+	articleRepo := repositories.New(db)
 
 	// Define users to seed
 	adminPassword := os.Getenv("ADMIN_PASSWORD")
@@ -42,7 +40,7 @@ func Seed() {
 		{"Alice Brown", "alice@example.com", "secret"},
 	}
 
-	aRepo := &articleRepo.ArticleRepository{DB: db}
+	// aRepo := &articleRepo.ArticleRepository{DB: db}
 
 	for _, u := range usersToSeed {
 		// Register User
@@ -52,15 +50,15 @@ func Seed() {
 			Email:    u.Email,
 			Password: string(hashedPassword),
 		}
-		if _, err := service.RegisterUser(newUser); err != nil {
+		if _, err := userRepo.RegisterUser(newUser); err != nil {
 			log.Printf("Error seeding user %s (might already exist): %v", u.Name, err)
 		} else {
 			log.Printf("User %s created successfully", u.Name)
 		}
 
 		// Get User ID
-		var userID int64
-		if err := db.QueryRow("SELECT id FROM users WHERE email = $1", u.Email).Scan(&userID); err != nil {
+		foundUser, err := userRepo.FindByEmail(u.Email)
+		if err != nil {
 			log.Printf("Error finding user ID for %s: %v", u.Email, err)
 			continue
 		}
@@ -70,10 +68,10 @@ func Seed() {
 			article := articleModels.Article{
 				Title:   fmt.Sprintf("%s - Article %d", u.Name, i),
 				Content: fmt.Sprintf("This is the content for article %d written by %s.\n\nLorem ipsum dolor sit amet.", i, u.Name),
-				UserID:  userID,
+				UserID:  foundUser.ID,
 			}
 
-			if err := aRepo.Create(&article); err != nil {
+			if err := articleRepo.Create(&article); err != nil {
 				log.Printf("Error seeding article '%s': %v", article.Title, err)
 			} else {
 				log.Printf("Article '%s' seeded successfully", article.Title)

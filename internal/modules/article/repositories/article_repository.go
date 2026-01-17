@@ -6,7 +6,6 @@ import (
 
 	"github.com/realwebdev/blog/internal/modules/article/models"
 	userModels "github.com/realwebdev/blog/internal/modules/user/models"
-	"github.com/realwebdev/blog/pkg/database"
 )
 
 // This line forces the compiler to check if ArticleRepository implements ArticleRepositoryInterface
@@ -16,9 +15,9 @@ type ArticleRepository struct {
 	DB *sql.DB
 }
 
-func New() *ArticleRepository {
+func New(db *sql.DB) *ArticleRepository {
 	return &ArticleRepository{
-		DB: database.Connection(),
+		DB: db,
 	}
 }
 

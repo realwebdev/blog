@@ -5,10 +5,11 @@ import (
 	"github.com/realwebdev/blog/internal/modules/article/controllers"
 	"github.com/realwebdev/blog/internal/modules/article/repositories"
 	"github.com/realwebdev/blog/internal/modules/article/services"
+	"github.com/realwebdev/blog/pkg/database"
 )
 
 func Routes(router *gin.Engine) {
-	articleRepository := repositories.New()
+	articleRepository := repositories.New(database.Connection())
 	articleService := services.New(articleRepository)
 	articleController := controllers.New(articleService)
 	router.GET("/articles/:id", articleController.Show)

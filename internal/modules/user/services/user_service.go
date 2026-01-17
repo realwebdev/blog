@@ -15,9 +15,9 @@ type UserService struct {
 	userRepository user.UserRepositoryInterface
 }
 
-func NewUserService(us UserService) *UserService {
+func NewUserService(uRI user.UserRepositoryInterface) *UserService {
 	return &UserService{
-		userRepository: us.userRepository,
+		userRepository: uRI,
 	}
 
 }
@@ -26,7 +26,7 @@ func (s *UserService) RegisterUser(request auth.RegisterRequest) (responses.User
 	var response responses.User
 	var user models.User
 
-	if _, err := mail.ParseAddress(user.Email); err != nil {
+	if _, err := mail.ParseAddress(request.Email); err != nil {
 		return responses.User{}, errors.New("invalid email format")
 	}
 

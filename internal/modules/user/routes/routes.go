@@ -2,13 +2,17 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	userCtrl "github.com/realwebdev/blog/internal/modules/user/controllers"
-	userRepo "github.com/realwebdev/blog/internal/modules/user/repositories"
+	"github.com/realwebdev/blog/internal/modules/user/controllers"
+	userRepository "github.com/realwebdev/blog/internal/modules/user/repositories"
+	"github.com/realwebdev/blog/internal/modules/user/services"
+	"github.com/realwebdev/blog/pkg/database"
 )
 
 func Routes(router *gin.Engine) {
-	userRepostiory := userRepo.NewService()
-	userController := userCtrl.New(baseController)
-	router.GET("/register", userController.Register)
-	router.POST("/register", userController.HandleRegister)
+	userRepo := userRepository.New(database.Connection())
+	userSer := services.NewUserService(userRepo)
+	userCtrl := controllers.New(userSer)
+
+	router.GET("/register", userCtrl.Register)
+	router.POST("/register", userCtrl.HandleRegister)
 }

@@ -13,9 +13,9 @@ type UserRepository struct {
 	DB *sql.DB
 }
 
-func NewService(repo UserRepository) *UserRepository {
+func New(db *sql.DB) *UserRepository {
 	return &UserRepository{
-		DB: repo.DB,
+		DB: db,
 	}
 }
 
@@ -26,4 +26,13 @@ func (r *UserRepository) RegisterUser(u *models.User) (models.User, error) {
 		return models.User{}, err
 	}
 	return *u, nil
+}
+
+func (r *UserRepository) FindByEmail(email string) (models.User, error) {
+	var user models.User
+	query := `SELECT id, name, email, password FROM users WHERE email = $1`
+	if err := r.DB.QueryRow(query, email).Scan(&user.ID, &user.Name, &user.Email, &user.Password); err != nil {
+		return models.User{}, err
+	}
+	return user, nil
 }

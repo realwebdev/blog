@@ -27,22 +27,18 @@ func (controller *Controller) Show(c *gin.Context) {
 		return
 	}
 
-	// 2. Find the article from the database
 	article, err := controller.articleService.Find(int64(id))
-
-	// 3. If the article not found, show error page
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
 		return
 	}
-	// 4. If article found, render the article page
-
-	// html.Render(c, http.StatusOK, "modules/home/html/home", gin.H{
-	// 	"title":    "Home page",
-	// 	"featured": controller.articleService.GetFeaturedArticles(),
-	// 	"stories":  controller.articleService.GetStoriesArticles(),
-	// })
 
 	c.JSON(http.StatusOK, gin.H{"ID": article})
+}
+
+func (controller *Controller) Create(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"message": "article create ...",
+	})
 }

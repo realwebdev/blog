@@ -106,3 +106,8 @@ func (controller *Controller) HandleLogin(c *gin.Context) {
 	log.Printf("The user logged in successfully with a name %s \n", user.Name)
 	c.Redirect(http.StatusFound, "/")
 }
+
+func (controller *Controller) HandleLogout(c *gin.Context) {
+	sessions.Remove(c, "auth")
+	c.Redirect(http.StatusFound, "/")
+}

@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/realwebdev/blog/internal/middleware"
 	"github.com/realwebdev/blog/internal/modules/user/controllers"
 	userRepository "github.com/realwebdev/blog/internal/modules/user/repositories"
 	"github.com/realwebdev/blog/internal/modules/user/services"
@@ -13,9 +14,20 @@ func Routes(router *gin.Engine) {
 	userSer := services.NewUserService(userRepo)
 	userCtrl := controllers.New(userSer)
 
-	router.GET("/register", userCtrl.Register)
-	router.POST("/register", userCtrl.HandleRegister)
+	guestGroup := router.Group("/")
+	guestGroup.Use(middleware.IsGuest())
+	{
+		guestGroup.GET("/register", userCtrl.Register)
+		guestGroup.POST("/register", userCtrl.HandleRegister)
 
-	router.GET("/login", userCtrl.Login)
-	router.POST("/login", userCtrl.HandleLogin)
+		guestGroup.GET("/login", userCtrl.Login)
+		guestGroup.POST("/login", userCtrl.HandleLogin)
+	}
+
+	authGroup := router.Group("/")
+	authGroup.Use(middleware.IsAuth())
+	{
+		authGroup.POST("/logout", userCtrl.HandleLogout)
+	}
+
 }

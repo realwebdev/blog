@@ -6,6 +6,6 @@ import (
 
 type UserRepositoryInterface interface {
 	RegisterUser(u *models.User) (models.User, error)
-	FindByID(id string) (models.User, error)
+	FindByID(id int) (models.User, error)
 	FindByEmail(email string) (models.User, error)
 }

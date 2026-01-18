@@ -20,8 +20,8 @@ func New(db *sql.DB) *UserRepository {
 }
 
 func (r *UserRepository) RegisterUser(u *models.User) (models.User, error) {
-	query := `INSERT INTO users (name, email, password, created_at, updated_at) VALUES ($1, $2, $3, $4, $5)`
-	_, err := r.DB.Exec(query, u.Name, u.Email, u.Password, time.Now(), time.Now())
+	query := `INSERT INTO users (name, email, password, created_at, updated_at) VALUES ($1, $2, $3, $4, $5) RETURNING id`
+	err := r.DB.QueryRow(query, u.Name, u.Email, u.Password, time.Now(), time.Now()).Scan(&u.ID)
 	if err != nil {
 		return models.User{}, err
 	}
@@ -37,9 +37,9 @@ func (r *UserRepository) FindByEmail(email string) (models.User, error) {
 	return user, nil
 }
 
-func (r *UserRepository) FindByID(id string) (models.User, error) {
+func (r *UserRepository) FindByID(id int) (models.User, error) {
 	var user models.User
-	query := `SELECT id, name, email FROM users WHERE email = $1`
+	query := `SELECT id, name, email FROM users WHERE id = $1`
 	if err := r.DB.QueryRow(query, id).Scan(&user.ID, &user.Name, &user.Email); err != nil {
 		return models.User{}, err
 	}

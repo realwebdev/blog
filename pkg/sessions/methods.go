@@ -16,7 +16,6 @@ func Flash(c *gin.Context, key string) string {
 	session := sessions.Default(c)
 
 	response := session.Get(key)
-	session.Save()
 
 	session.Delete(key)
 	session.Save()

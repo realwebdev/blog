@@ -21,5 +21,8 @@ func FromValidation(err error) map[string]string {
 }
 
 func GetErrorMsg(tag string) string {
-	return validation.ErrorMessages()[tag]
+	if msg, ok := validation.ErrorMessages()[tag]; ok {
+		return msg
+	}
+	return "Invalid value"
 }

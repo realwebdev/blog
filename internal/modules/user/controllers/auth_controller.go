@@ -10,6 +10,7 @@ import (
 	"github.com/realwebdev/blog/pkg/converters"
 	"github.com/realwebdev/blog/pkg/errors"
 	"github.com/realwebdev/blog/pkg/html"
+	"github.com/realwebdev/blog/pkg/old"
 	"github.com/realwebdev/blog/pkg/sessions"
 )
 
@@ -37,6 +38,11 @@ func (controller *Controller) HandleRegister(c *gin.Context) {
 		validationErrors := errors.FromValidation(err)
 
 		sessions.Set(c, "errors", converters.MapToString(validationErrors))
+
+		old.Init()
+		old.Set(c)
+		sessions.Set(c, "old", converters.UrlValuesToString(old.Get()))
+
 		c.Redirect(http.StatusFound, "/register")
 		return
 	}

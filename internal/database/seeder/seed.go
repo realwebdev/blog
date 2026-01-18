@@ -50,17 +50,11 @@ func Seed() {
 			Email:    u.Email,
 			Password: string(hashedPassword),
 		}
-		if _, err := userRepo.RegisterUser(newUser); err != nil {
+		user, err := userRepo.RegisterUser(newUser)
+		if err != nil {
 			log.Printf("Error seeding user %s (might already exist): %v", u.Name, err)
 		} else {
 			log.Printf("User %s created successfully", u.Name)
-		}
-
-		// Get User ID
-		foundUser, err := userRepo.FindByEmail(u.Email)
-		if err != nil {
-			log.Printf("Error finding user ID for %s: %v", u.Email, err)
-			continue
 		}
 
 		// Seed 6 Articles per user
@@ -68,7 +62,7 @@ func Seed() {
 			article := articleModels.Article{
 				Title:   fmt.Sprintf("%s - Article %d", u.Name, i),
 				Content: fmt.Sprintf("This is the content for article %d written by %s.\n\nLorem ipsum dolor sit amet.", i, u.Name),
-				UserID:  foundUser.ID,
+				UserID:  user.ID,
 			}
 
 			if err := articleRepo.Create(&article); err != nil {

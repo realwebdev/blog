@@ -65,7 +65,7 @@ func Seed() {
 				UserID:  user.ID,
 			}
 
-			if err := articleRepo.Create(&article); err != nil {
+			if _, err := articleRepo.Create(&article); err != nil {
 				log.Printf("Error seeding article '%s': %v", article.Title, err)
 			} else {
 				log.Printf("Article '%s' seeded successfully", article.Title)

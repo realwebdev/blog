@@ -71,11 +71,24 @@ func (r *ArticleRepository) Find(id int64) models.Article {
 	return article
 }
 
-func (r *ArticleRepository) Create(article *models.Article) error {
+func (r *ArticleRepository) Create(article *models.Article) (*models.Article, error) {
 	query := `
 		INSERT INTO articles (title, content, user_id, created_at, updated_at)
 		VALUES ($1, $2, $3, NOW(), NOW())
-		RETURNING id
+		RETURNING *
 	`
-	return r.DB.QueryRow(query, article.Title, article.Content, article.UserID).Scan(&article.ID)
+
+	err := r.DB.QueryRow(query, article.Title, article.Content, article.UserID).Scan(
+		&article.ID,
+		&article.Title,
+		&article.Content,
+		&article.UserID,
+		&article.CreatedAt,
+		&article.UpdatedAt,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return article, nil
 }

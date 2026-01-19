@@ -3,8 +3,11 @@ package services
 import (
 	"errors"
 
+	articleModel "github.com/realwebdev/blog/internal/modules/article/models"
 	"github.com/realwebdev/blog/internal/modules/article/repositories"
+	"github.com/realwebdev/blog/internal/modules/article/requests/articles"
 	"github.com/realwebdev/blog/internal/modules/article/responses"
+	userResponse "github.com/realwebdev/blog/internal/modules/user/responses"
 )
 
 var _ ArticleServiceInterface = (*ArticleService)(nil)
@@ -40,4 +43,19 @@ func (as *ArticleService) Find(id int64) (responses.Article, error) {
 	}
 
 	return responses.ToArticle(article), nil
+}
+
+func (as *ArticleService) Store(request articles.StoreRequest, user userResponse.User) (responses.Article, error) {
+	var article articleModel.Article
+
+	article.Title = request.Title
+	article.Content = request.Content
+	article.UserID = user.ID
+
+	newArticle, err := as.articleRepository.Create(&article)
+	if err != nil {
+		return responses.ToArticle(article), err
+	}
+
+	return responses.ToArticle(*newArticle), nil
 }

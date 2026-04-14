@@ -1,5 +1,5 @@
-https://goreportcard.com/report/github.com/realwebdev/blog
-[![Go Report Card](https://goreportcard.com)]([https://goreportcard.com](https://goreportcard.com/report/github.com/realwebdev/blog))
+[![Go Report Card](https://goreportcard.com)](https://goreportcard.com)
+
 # 📝 Go Blog Engine
 
 A modular, full stack blog application built in **Go**, following **Clean Architecture principles**.

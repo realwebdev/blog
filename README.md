@@ -1,4 +1,4 @@
-[![Go Report Card](https://goreportcard.com)](https://goreportcard.com)
+[![Go Report Card](https://goreportcard.com/badge/github.com/realwebdev/blog)](https://goreportcard.com/report/github.com/realwebdev/blog)
 
 # 📝 Go Blog Engine
 
